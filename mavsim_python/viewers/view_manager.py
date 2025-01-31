@@ -25,7 +25,7 @@ class ViewManager:
                  video: bool=False, 
                  data: bool=False, 
                  sensors: bool=False, 
-                 animation: bool=False,
+                 animation: bool=True,
                  save_plots: bool=False,
                  path: bool=False,
                  waypoint: bool=False,

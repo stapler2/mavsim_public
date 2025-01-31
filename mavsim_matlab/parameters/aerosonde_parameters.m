@@ -8,7 +8,7 @@ MAV.mass = 11.0;
 MAV.Jx   = 0.824;
 MAV.Jy   = 1.135;
 MAV.Jz   = 1.759;
-MAV.Jxz  = 0.120;
+MAV.Jxz  = 0;   
 
 % initial conditions
 MAV.pn0    = 0;     % initial North position
@@ -30,7 +30,7 @@ MAV.q0     = 0;     % initial body frame pitch rate
 MAV.r0     = 0;     % initial body frame yaw rate
 
 % Gamma parameters from uavbook page 36
-MAV.Gamma  = MAV.Jx*MAV.Jz-MAV.Jxz^2;
+MAV.Gamma  = MAV.Jx*MAV.Jz-MAV.Jxz**2;
 MAV.Gamma1 = (MAV.Jxz*(MAV.Jx-MAV.Jy+MAV.Jz))/MAV.Gamma;
 MAV.Gamma2 = (MAV.Jz*(MAV.Jz-MAV.Jy)+MAV.Jxz*MAV.Jxz)/MAV.Gamma;
 MAV.Gamma3 = MAV.Jz/MAV.Gamma;

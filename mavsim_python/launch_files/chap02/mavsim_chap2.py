@@ -8,10 +8,12 @@ mavsimPy
         7/13/2023 - RWB
         1/16/2024 - RWB
 """
+from IPython.core.debugger import set_trace
 import os, sys
 # insert parent directory at beginning of python search path
 from pathlib import Path
 sys.path.insert(0,os.fspath(Path(__file__).parents[2]))
+# set_trace()
 # use QuitListener for Linux or PC <- doesn't work on Mac
 #from python_tools.quit_listener import QuitListener
 import parameters.simulation_parameters as SIM
@@ -21,8 +23,7 @@ import time
 
 # #quitter = QuitListener()
 state = MsgState()
-viewers = ViewManager(mav=True, 
-                      video=False, video_name='chap2.mp4')
+viewers = ViewManager(video=True, video_name='chap2.mp4')
 
 # initialize the simulation time
 sim_time = SIM.start_time

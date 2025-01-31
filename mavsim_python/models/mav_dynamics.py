@@ -87,31 +87,66 @@ class MavDynamics:
         for the dynamics xdot = f(x, u), returns f(x, u)
         """
         ##### TODO #####
-        
+
+        # phi, theta, psi = quaternion_to_euler(self._state[6:10])
+
         # Extract the States
-        # north = state.item(0)
+        north = state.item(0)
+        east = state.item(1)
+        down = state.item(2)
+        # linar velocities
+        u = state.item(3)
+        v = state.item(4)
+        w = state.item(5)
+        # quaternions
+        e0 = state.item(6)
+        e1 = state.item(7)
+        e2 = state.item(8)
+        e3 = state.item(9)
+        # rotational velocities
+        p = state.item(10) # roll rate
+        q = state.item(11) # pitch rate
+        r = state.item(12) # yaw rate
+
 
         # Extract Forces/Moments
-        # fx = forces_moments.item(0)
+        fx = forces_moments.item(0)
+        fy = forces_moments.item(1)
+        fz = forces_moments.item(2)
+        Mx = forces_moments.item(3)
+        My = forces_moments.item(4)
+        Mz = forces_moments.item(5)
 
         # Position Kinematics
-        # pos_dot = 
+        # north_dot = [(e0**2 + e1**2 - e2**2 - e3**2)*u + 2*(e1*e2 - e0*e3)*v + 2*(e1*e3 + e2*e0)*w]
+        # east_dot = [(2*(e1*e2 + e3*e0))*u + (e0**2 - e1**2 + e2**2 - e3**2)*v + 2*(e2*e3 - e1*e0)*w]
+        # down_dot = [2*(e1*e3 - e2*e0)*u + 2*(e2*e3 + e1*e0)*v + (e0**2 - e1**2 - e2**2 + e3**2)*w]
+
+        north_dot = quaternion_to_rotation(state[6:10])@np.array([[u],[v],[w]])
 
         # Position Dynamics
-        # u_dot = 
+        u_dot = [r*v - q*w + fx/MAV.mass]
+        v_dot = [p*w - r*u + fy/MAV.mass]
+        w_dot = [q*u - p*v + fz/MAV.mass]
 
 
         # rotational kinematics
-        # e0_dot =
+        e0_dot = [0.5*(-p*e1 - q*e2 - r*e3)]
+        e1_dot = [0.5*(p*e0 + r*e2 - q*e3)]
+        e2_dot = [0.5*(q*e0 - r*e1 + p*e3)]
+        e3_dot = [0.5*(r*e0 + q*e1 - p*e2)]
 
 
         # rotatonal dynamics
-        # p_dot = 
+        p_dot = [MAV.gamma1*p*q - MAV.gamma2*q*r + MAV.gamma3*Mx + MAV.gamma4*Mz]
+        q_dot = [MAV.gamma5*p*r - MAV.gamma6*(p*p - r*r) + My/MAV.Jy]
+        r_dot = [MAV.gamma7*p*q - MAV.gamma1*q*r + MAV.gamma4*Mx + MAV.gamma8*Mz]
         
 
         # collect the derivative of the states
         # x_dot = np.array([[north_dot, east_dot,... ]]).T
-        x_dot = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0]]).T
+        x_dot = np.array([north_dot[0], north_dot[1], north_dot[2], u_dot, v_dot, w_dot, e0_dot, e1_dot, e2_dot, e3_dot, p_dot, q_dot, r_dot])
+        #   print(x_dot)
         return x_dot
 
     def _update_true_state(self):
@@ -122,7 +157,6 @@ class MavDynamics:
         self.true_state.east = self._state.item(1)
         self.true_state.altitude = -self._state.item(2)
         self.true_state.Va = 0
-        self.true_state.alpha = 0
         self.true_state.beta = 0
         self.true_state.phi = phi
         self.true_state.theta = theta
